@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LostAndFound</string>
+    <string name="title_activity_main">LostAndFound</string>
+    <string name="package_name">com.vitap.lostandfound</string>
+    <string name="custom_url_scheme">com.vitap.lostandfound</string>
+</resources>
