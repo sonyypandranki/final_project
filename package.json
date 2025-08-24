@@ -1,5 +1,12 @@
 {
+  "scripts": {
+  "start": "vite",
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
+},
   "devDependencies": {
-    "@capacitor/cli": "^8.0.0-alpha.1"
+    "@capacitor/cli": "^8.0.0-alpha.1",
+    "vite": "^5.0.0"
   }
 }

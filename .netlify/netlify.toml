@@ -1,3 +1,5 @@
+functionsDirectory = "C:\\Users\\SONY\\Downloads\\project-main\\netlify\\functions"
+functionsDirectoryOrigin = "config-v1"
 plugins = []
 headers = []
 redirects = []
@@ -7,9 +9,11 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "C:\\Users\\SONY\\Downloads\\project-main"
-publishOrigin = "default"
-base = "C:\\Users\\SONY\\Downloads\\project-main"
+publish = "C:\\Users\\SONY\\Downloads\\project-main\\dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+functions = "C:\\Users\\SONY\\Downloads\\project-main\\netlify\\functions"
 
 [build.environment]
 
