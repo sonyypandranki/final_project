@@ -13,7 +13,7 @@ import {
   serverTimestamp,
   Timestamp
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import { LostFoundItem } from '../types/item';
 
 // Collection references
@@ -23,12 +23,18 @@ const USERS_COLLECTION = 'users';
 // Add a new lost/found item
 export const addItem = async (item: Omit<LostFoundItem, 'id' | 'createdAt'>) => {
   try {
+    // Ensure the current user is authenticated
+    if (!auth.currentUser) {
+      throw new Error('User must be authenticated to add items');
+    }
+
     const docRef = await addDoc(collection(db, ITEMS_COLLECTION), {
       ...item,
+      ownerId: auth.currentUser.uid, // Use 'ownerId' to match existing data structure
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
-    return { id: docRef.id, ...item };
+    return { id: docRef.id, ...item, ownerId: auth.currentUser.uid };
   } catch (error) {
     console.error('Error adding item: ', error);
     throw error;
@@ -65,6 +71,7 @@ export const deleteItem = async (id: string) => {
 // Get all items
 export const getAllItems = async () => {
   try {
+    // First try to get items ordered by createdAt
     const q = query(
       collection(db, ITEMS_COLLECTION),
       orderBy('createdAt', 'desc')
@@ -75,8 +82,28 @@ export const getAllItems = async () => {
       ...doc.data()
     })) as LostFoundItem[];
   } catch (error) {
-    console.error('Error getting items: ', error);
-    throw error;
+    console.error('Error getting items with orderBy: ', error);
+    
+    // Fallback: get items without ordering if createdAt index fails
+    try {
+      const q = query(collection(db, ITEMS_COLLECTION));
+      const querySnapshot = await getDocs(q);
+      const items = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as LostFoundItem[];
+      
+      // Sort manually by createdAt if available, otherwise by document ID
+      return items.sort((a, b) => {
+        if (a.createdAt && b.createdAt) {
+          return b.createdAt.toMillis() - a.createdAt.toMillis();
+        }
+        return b.id.localeCompare(a.id);
+      });
+    } catch (fallbackError) {
+      console.error('Fallback error getting items: ', fallbackError);
+      throw fallbackError;
+    }
   }
 };
 
@@ -94,8 +121,31 @@ export const getItemsByStatus = async (status: 'lost' | 'found') => {
       ...doc.data()
     })) as LostFoundItem[];
   } catch (error) {
-    console.error('Error getting items by status: ', error);
-    throw error;
+    console.error('Error getting items by status with orderBy: ', error);
+    
+    // Fallback: get items without ordering if createdAt index fails
+    try {
+      const q = query(
+        collection(db, ITEMS_COLLECTION),
+        where('status', '==', status)
+      );
+      const querySnapshot = await getDocs(q);
+      const items = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as LostFoundItem[];
+      
+      // Sort manually by createdAt if available, otherwise by document ID
+      return items.sort((a, b) => {
+        if (a.createdAt && b.createdAt) {
+          return b.createdAt.toMillis() - a.createdAt.toMillis();
+        }
+        return b.id.localeCompare(a.id);
+      });
+    } catch (fallbackError) {
+      console.error('Fallback error getting items by status: ', fallbackError);
+      throw fallbackError;
+    }
   }
 };
 

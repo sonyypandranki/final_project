@@ -9,7 +9,6 @@ headers = []
 publish = "C:\\Users\\SONY\\Downloads\\project-main\\project-main\\lost-and-found-vitap-main\\dist"
 publishOrigin = "ui"
 commandOrigin = "ui"
-base = "C:\\Users\\SONY\\Downloads\\project-main\\project-main\\lost-and-found-vitap-main"
 command = "npm run build"
 
 [build.environment]
