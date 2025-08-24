@@ -55,6 +55,7 @@ const LostItemsSection = () => {
           {lostItems.map((item) => (
             <Card
               key={item.id}
+              id={`item-${item.id}`}
               className="group overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border-0"
             >
               <div className="relative">

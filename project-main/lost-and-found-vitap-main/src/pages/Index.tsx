@@ -4,7 +4,6 @@ import CategoriesSection from "../components/CategoriesSection";
 // import RecentItemsSection from "../components/RecentItemsSection";
 // import StatsSection from "../components/StatsSection";
 import AddItemDialog from "../components/AddItemDialog";
-import LostItemsSection from "../components/LostItemsSection";
 
 const Index = () => {
   return (
@@ -12,7 +11,6 @@ const Index = () => {
       <Header />
       <HeroSection />
       <CategoriesSection />
-      <LostItemsSection />
       {/* <RecentItemsSection /> */}
       {/* <StatsSection /> */}
       
@@ -50,9 +48,10 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/60">
-            <p>&copy; 2024 University Lost & Found.</p>
-          </div>
+                      <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/60">
+              <p>&copy; 2025 VIT-AP University Lost & Found.</p>
+              <p className="mt-2 text-sm">Developed by Sony Pandranki(22BCE9126) & Sai Sharad Ravva(22BCE7230)</p>
+            </div>
         </div>
       </footer>
     </div>

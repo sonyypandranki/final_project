@@ -7,11 +7,44 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const [regNoInput, setRegNoInput] = useState("");
+  const [regNoError, setRegNoError] = useState<string>('');
   const { login } = useAuth();
+
+  // Validate registration number format
+  const validateRegNo = (regNo: string): boolean => {
+    // Pattern: 2 digits + 2-3 letters + 4 digits
+    // Examples: 22BCE9126, 22BBA7024, 23CS1234, 24AI5678
+    const regNoPattern = /^[7892]\d{1}[A-Z]{2,3}\d{4}$/;
+    return regNoPattern.test(regNo.toUpperCase());
+  };
+
+  // Handle input change with validation
+  const handleInputChange = (inputValue: string) => {
+    setRegNoInput(inputValue);
+    
+    if (inputValue.trim() === '') {
+      setRegNoError('');
+    } else if (!validateRegNo(inputValue)) {
+      setRegNoError('Invalid format');
+    } else {
+      setRegNoError('');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regNoInput.trim()) return;
+    
+    if (!regNoInput.trim()) {
+      setRegNoError('Registration number is required');
+      return;
+    }
+
+    if (!validateRegNo(regNoInput)) {
+      setRegNoError('Invalid format');
+      return;
+    }
+
+    setRegNoError('');
     login(regNoInput);
   };
 
@@ -26,11 +59,17 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <Label className="space-y-2">
               <span>Registration Number</span>
-              <Input
-                placeholder="e.g., 22BCE1234"
-                value={regNoInput}
-                onChange={(e) => setRegNoInput(e.target.value)}
-              />
+                          <Input
+              placeholder="e.g., 22BCE9126"
+              value={regNoInput}
+              onChange={(e) => handleInputChange(e.target.value)}
+              className={regNoError ? "border-destructive" : ""}
+            />
+            {regNoError && (
+              <p className="text-xs text-destructive mt-1">
+                {regNoError}
+              </p>
+            )}
             </Label>
             <Button type="submit" className="w-full">Login</Button>
           </form>

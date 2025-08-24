@@ -26,6 +26,7 @@ const AddItemDialog = ({ trigger }: AddItemDialogProps) => {
     phone: '',
     image: ''
   });
+  const [phoneError, setPhoneError] = useState<string>('');
 
   const { addItem } = useItems();
   const { toast } = useToast();
@@ -58,6 +59,32 @@ const AddItemDialog = ({ trigger }: AddItemDialogProps) => {
     reader.readAsDataURL(file);
   };
 
+  // Validate phone number (must be exactly 10 digits)
+  const validatePhoneNumber = (phone: string): boolean => {
+    const digitsOnly = phone.replace(/\D/g, '');
+    return digitsOnly.length === 10;
+  };
+
+  // Handle phone input change with validation
+  const handlePhoneChange = (phone: string) => {
+    setFormData(prev => ({ ...prev, phone }));
+    
+    if (phone.trim() === '') {
+      setPhoneError('');
+    } else if (!validatePhoneNumber(phone)) {
+      const digitsOnly = phone.replace(/\D/g, '');
+      if (digitsOnly.length < 10) {
+        setPhoneError(`Need ${10 - digitsOnly.length} more digit${10 - digitsOnly.length === 1 ? '' : 's'}`);
+      } else if (digitsOnly.length > 10) {
+        setPhoneError('Phone number is too long');
+      } else {
+        setPhoneError('Invalid phone number format');
+      }
+    } else {
+      setPhoneError('');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -65,6 +92,26 @@ const AddItemDialog = ({ trigger }: AddItemDialogProps) => {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate phone number
+    if (!validatePhoneNumber(formData.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Phone number must contain exactly 10 digits.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if there are any validation errors
+    if (phoneError) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the phone number error before submitting.",
         variant: "destructive"
       });
       return;
@@ -92,6 +139,7 @@ const AddItemDialog = ({ trigger }: AddItemDialogProps) => {
       image: ''
     });
     
+    setPhoneError('');
     setOpen(false);
   };
 
@@ -199,10 +247,19 @@ const AddItemDialog = ({ trigger }: AddItemDialogProps) => {
             <Label className="space-y-2">
               <span>Contact Number *</span>
               <Input
-                placeholder="+91 98765 43210"
+                placeholder=""
                 value={formData.phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                maxLength={15}
+                pattern="[0-9+\s-]*"
+                title="Enter a 10-digit phone number"
+                className={phoneError ? "border-destructive" : ""}
               />
+              {phoneError && (
+                <p className="text-xs text-destructive">
+                  {phoneError}
+                </p>
+              )}
             </Label>
           </div>
 

@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
+import CategoryItems from "./pages/CategoryItems";
+import LostItems from "./pages/LostItems";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ const App = () => {
               <Routes>
                 <Route path="/" element={isLoggedIn ? <Index /> : <Login />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/lost-items" element={<LostItems />} />
+                <Route path="/category/:category" element={<CategoryItems />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

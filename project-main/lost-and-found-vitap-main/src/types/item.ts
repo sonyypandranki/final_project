@@ -19,7 +19,6 @@ export const CATEGORIES = [
   "Documents",
   "ID Card",
   "Keys",
-  "Clothing",
   "Books",
   "Others"
 ] as const;
@@ -31,7 +30,7 @@ export const LOCATION_CATEGORIES = [
   },
   {
     label: "Campus Common Areas",
-    options: ["Rock Plaza", "Food Street"]
+    options: ["Rock Plaza", "Food Street", "Indoor Stadium"]
   },
   {
     label: "Men’s Hostels (MH)",
